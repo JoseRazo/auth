@@ -20,7 +20,7 @@ use App\Http\Controllers\API\UserController;
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group( function () {
-    Route::get('logout', [AuthController::class, 'logout']);
-    Route::resource('users', UserController::class);
+    Route::post('logout', [AuthController::class, 'logout']);
+    // Route::resource('users', UserController::class);
 });
 

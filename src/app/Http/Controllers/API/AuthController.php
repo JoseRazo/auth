@@ -44,7 +44,11 @@ class AuthController extends BaseController
         try {
             if ($user && $decryptPassword === $user->password && $user->activo) {
                 // $user = auth()->user();
-                $data['token'] = JWTAuth::fromUser($user);
+                // $data['token'] = JWTAuth::fromUser($user);
+                $data = [
+                    'token' => JWTAuth::fromUser($user),
+                    'login' => $user->login,
+                ];
 
                 $response['data'] = $data;
                 $response['status'] = 1;
@@ -64,5 +68,25 @@ class AuthController extends BaseController
         $response['data'] = null;
         $response['message'] = 'El nombre de usuario o contraseña son incorrectos';
         return response()->json($response, 401);
+    }
+
+    public function logout(Request $request)
+    {
+        // Get JWT Token from the request header key "Authorization"
+        $token = $request->header("Authorization");
+        // Invalidate the token
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response()->json([
+                "status" => "success",
+                "message" => "Sesión cerrada correctamente."
+            ]);
+        } catch (JWTException $e) {
+            // something went wrong whilst attempting to encode the token
+            return response()->json([
+                "status" => "error",
+                "message" => "Error, por favor intente nuevamente."
+            ], 500);
+        }
     }
 }
